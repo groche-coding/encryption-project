@@ -1,1 +1,326 @@
-###
+import random
+import time
+from random import randint
+
+def start():
+    reflector = []
+    rotorlist = [[],[],[],[],[],[]]
+    introduction = [" -################################################################",
+                    " -################################################################",
+                    " -##                                                            ##",
+                    " -##  program info:                                             ##",
+                    " -##  this is some informative text...                          ##",
+                    " -##                                                            ##",
+                    " -##                                                            ##",
+                    " -##                                                            ##",
+                    " -##                                                            ##",
+                    " -##                                                            ##",
+                    " -##                                                            ##",
+                    " -##                                                            ##",
+                    " -##                                                            ##",
+                    " -##                                                            ##",
+                    " -################################################################",
+                    " -################################################################\n\n"]
+    for line in introduction:
+        print(line)
+    alphabet = ["■"," ","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","!","£","$","%","^","&","*","(",")","-","_","=","+","[","]","{","}",";",":","'","@","#","~","|",",","<",".",">","/","\\","\"","?","0","1","2","3","4","5","6","7","8","9"]
+    setup = getinput(" -Input 'current' to use current setup\n -Input 'new' to generate a new setup\n -Or input 'create' to create a new setup\n >")
+    while setup not in ("current","new","create"):
+        setup = getinput(" -\n -Error\n -\n -Input 'current' to use current setup\n -Input 'new' to generate a new setup\n -Or input 'create' to create a new setup\n >")
+    if setup == "current":
+        configuration = []
+        rotations = []
+        pblist = []
+        pb_config = []
+        try:
+            with open("saved_setup_encryption_2.7.txt") as current_setup:
+                n = 0
+                for line in current_setup:
+                    n += 1
+                    if n <= len(alphabet)*len(rotorlist):
+                        rotorlist[(n-1)//len(alphabet)].append(int(line.strip()))
+                    elif n <= len(alphabet)*(len(rotorlist)+1):
+                        reflector.append(int(line.strip()))
+                    elif n <= (len(alphabet)*(len(rotorlist)+1))+3:
+                        configuration.append(int(line.strip()))
+                    elif n <= (len(alphabet)*(len(rotorlist)+1))+6:
+                        rotations.append(int(line.strip()))
+                    else:
+                        pb_config.append(line.strip())
+                        if len(pb_config) == 2:
+                            pblist.append(pb_config)
+                            pb_config = []
+        except:
+            print(" -Error with: 'saved_setup_encryption_2.7.txt'\n -restart\n") 
+            time.sleep(3)
+            start()
+    elif setup == "new":
+        pblist = []
+        unswappedlist = alphabet.copy()
+        while True:
+            check = [False,False]
+            pb_config = [alphabet[randint(0,len(alphabet)-1)],alphabet[randint(0,len(alphabet)-1)]]
+            for r in (0,1):
+                if str(pb_config[r]) in unswappedlist:
+                    check[r] = True
+            if False not in check and pb_config[0] != pb_config[1]:
+                unswappedlist.remove(pb_config[0])
+                unswappedlist.remove(pb_config[1])
+                pblist.append(pb_config)
+            if len(unswappedlist) < 2 or randint(0,len(alphabet)-1) == 0:
+                break
+        for n in range(len(rotorlist)):
+            rotorlist[n] = getrotor(alphabet)
+        reflector = getreflector(alphabet)
+        configuration = [randint(1,6),randint(1,6),randint(1,6)]
+        rotations = [randint(0,len(alphabet)-1),randint(0,len(alphabet)-1),randint(0,len(alphabet)-1)]
+        save = input(" -Save setup as 'saved_setup_encryption_2.7.txt' (Y/N)\n -This will replace current setup\n >")
+        while save not in ["Y","N"]:
+            save = input(" -\n -Error\n -\n -Save setup as 'saved_setup_encryption_2.7.txt' (Y/N)\n -This will replace current setup\n >")
+        if save == "Y":
+            try:
+                save_list = []
+                for rotor in rotorlist:
+                    for element in rotor:
+                        save_list.append(element)
+                for element in reflector:
+                    save_list.append(element)
+                for element in configuration:
+                    save_list.append(element)
+                for element in rotations:
+                    save_list.append(element)
+                for pb_config in pblist:
+                    for element in pb_config:
+                        save_list.append(element)
+                with open("saved_setup_encryption_2.7.txt", "w") as current_setup:
+                    current_setup.write("\n".join(map(str,save_list)))
+            except:
+                print(" -Error with: 'saved_setup_encryption_2.7.txt'\n -restart\n")
+                time.sleep(3)
+                start()
+    elif setup == "create":
+        rotorset = getinput(" -Input 'current' to use current rotor set\n -Input 'new' to generate a new rotor set\n >")
+        while rotorset not in ("current","new"):
+            rotorset = getinput(" -\n -Error\n -\n -Input 'current' to use built in rotor set\n -Input 'new' to generate a new rotor set\n >")
+        if rotorset == "new":
+            for n in range(len(rotorlist)):
+                rotorlist[n] = getrotor(alphabet)
+                print(f" -Rotor {n+1}:\n -{rotorlist[n]}")
+            reflector = getreflector(alphabet)
+            print(f" -Reflector:\n -{reflector}")
+            save = getinput(" -Save rotor list as 'saved_rotors_encryption_2.7.txt' (Y/N)\n -This will replace current rotor list\n >")
+            while save not in ["Y","N"]:
+                save = input(" -\n -Error\n -\n -Save rotor list as 'saved_rotors_encryption_2.7.txt' (Y/N)\n -This will replace current rotor list\n >")
+            if save == "Y":
+                try:
+                    save_list = []
+                    for rotor in rotorlist:
+                        for element in rotor:
+                            save_list.append(element)
+                    for element in reflector:
+                        save_list.append(element)
+                    with open("saved_rotors_encryption_2.7.txt", "w") as current_setup:
+                        current_setup.write("\n".join(map(str,save_list)))
+                except:
+                    print(" -Error with: 'saved_rotors_encryption_2.7.txt'\n -restart\n")
+                    time.sleep(3)
+                    start()
+        elif rotorset == "current":
+            try:
+                with open("saved_rotors_encryption_2.7.txt") as current_setup:
+                    n = 0
+                    for line in current_setup:
+                        n += 1
+                        if n <= len(alphabet)*len(rotorlist):
+                            rotorlist[(n-1)//len(alphabet)].append(int(line.strip()))
+                        elif n <= len(alphabet)*(len(rotorlist)+1):
+                            reflector.append(int(line.strip()))
+            except:
+                print(" -Error with: 'saved_rotors_encryption_2.7.txt'\n -restart\n")
+                time.sleep(3)
+                start()
+        validation = False
+        while validation == False:
+            validation = True
+            configuration = getinput(f" -1~{len(rotorlist)}\n -Input rotor configuration as 3 numbers seperated by spaces:\n >").split(" ")
+            if len(configuration) == 3:
+                for r in configuration:
+                    if str(r) not in ("1","2","3","4","5","6"):
+                        validation = False
+            else:
+                validation = False
+            if validation == False:
+                print(" -\n -Error\n -")
+        validation = False
+        while validation == False:
+            validation = True
+            rotations = getinput(f" -0~{len(alphabet)-1}\n -Input rotor rotations as 3 numbers seperated by spaces:\n >").split(" ")
+            if len(rotations) == 3:
+                try:
+                    for r in rotations:
+                        if int(r) not in range(0,len(alphabet)):
+                            validation = False
+                except:
+                    print("-\n -Error\n -")
+                    validation = False
+            else:
+                validation = False
+            if validation == False:
+                print(" -\n -Error\n -")
+        for i in range(len(rotations)):
+            rotations[i] = int(rotations[i])
+        validation = False
+        pblist = []
+        unswappedlist = alphabet.copy()
+        while validation == False:
+            check = [False,False]
+            pb_config = getinput(" -\n -Input plug board configuration:\n -As two characters to swap separated by a space\n -Or enter 'end' to stop\n >")
+            if pb_config == "end":
+                validation = True
+            else:
+                pb_config = pb_config.split(" ")
+                if len(pb_config) == 2 and pb_config[0] != pb_config[1]:
+                    for r in (0,1):
+                        if str(pb_config[r]) in unswappedlist:
+                            check[r] = True
+                    if False not in check:
+                        unswappedlist.remove(pb_config[0])
+                        unswappedlist.remove(pb_config[1])
+                        pblist.append(pb_config)
+                    else:
+                        print(" -\n -Error\n -character not in alphabet\n -\n -Or character has already been swapped\n")
+                else:
+                    print(" -\n -Error\n -")
+        save = input(" -Save setup as 'saved_setup_encryption_2.7.txt' (Y/N)\n -This will replace current setup\n >")
+        while save not in ["Y","N"]:
+            save = input(" -\n -Error\n -\n -Save setup as 'saved_setup_encryption_2.7.txt' (Y/N)\n -This will replace current setup\n >")
+        if save == "Y":
+            try:
+                save_list = []
+                for rotor in rotorlist:
+                    for element in rotor:
+                        save_list.append(element)
+                for element in reflector:
+                    save_list.append(element)
+                for element in configuration:
+                    save_list.append(element)
+                for element in rotations:
+                    save_list.append(element)
+                for pb_config in pblist:
+                    for element in pb_config:
+                        save_list.append(element)
+                with open("saved_setup_encryption_2.7.txt", "w") as current_setup:
+                    current_setup.write("\n".join(map(str,save_list)))
+            except:
+                print(" -Error with: 'saved_setup_encryption_2.7.txt'\n -restart\n")
+                time.sleep(3)
+                start()
+    while 0 == 0:
+        enigma(rotorlist[int(configuration[0])-1],rotorlist[int(configuration[1])-1],rotorlist[int(configuration[2])-1],reflector,alphabet,rotations[0],rotations[1],rotations[2],pblist)
+
+def getinput(text):
+    var = input(text)
+    if var == "help":
+        helpinfo()
+        var = getinput(text)
+    elif var == "restart":
+        start()
+    return var
+
+def getrotor(alphabet):
+    newrotor = []
+    while len(newrotor) < len(alphabet):
+        x = randint(0,len(alphabet)-1)
+        if x not in newrotor:
+            newrotor.append(x)
+    return newrotor
+
+def getreflector(alphabet):
+    newreflector = []
+    unswappedlist = alphabet.copy()
+    for i in alphabet:
+        newreflector.append(-1)
+    target = 0
+    total = 0
+    for i in range(len(alphabet)):
+        target += len(alphabet)-i
+    target -= len(alphabet)
+    while total < target:
+        x = 0
+        y = 0
+        while x == y:
+            x = alphabet.index(unswappedlist[randint(0,len(unswappedlist)-1)])
+            y = alphabet.index(unswappedlist[randint(0,len(unswappedlist)-1)])
+        unswappedlist.remove(alphabet[x])
+        unswappedlist.remove(alphabet[y])
+        newreflector[y] = x
+        newreflector[x] = y
+        total = 0
+        for i in newreflector:
+            total += i
+    return newreflector
+
+def enigma(r1,r2,r3,reflector,alphabet,r1r,r2r,r3r,pblist):
+    reflectedlist = [r3,r2,r1]
+    reflectedrotations = [r3r,r2r,r1r]
+    text = getinput(" -Input text:\n >\n")
+    indexlist = []
+    for letter in text:
+        index = 0
+        for x in range(len(alphabet)):
+            if alphabet[x] == letter:
+                index = x
+                for i in range(len(pblist)):
+                    if letter in pblist[i]:
+                        index = alphabet.index(pblist[i][abs(pblist[i].index(letter)-1)])
+        indexlist.append(index)
+    answer = ""
+    for n in range(len(indexlist)):
+        y = reflector[r3[(r2[(r1[(indexlist[n]+(n+r1r))%((len(alphabet)))]+(n//len(alphabet)+r2r))%len(alphabet)]+(n//(len(alphabet)**2)+r3r))%len(alphabet)]]
+        for i in range(len(reflectedlist)):
+            y = (reflectedlist[i].index(y)- n//(len(alphabet)**(2-i))+len(alphabet)-reflectedrotations[i])% len(alphabet)
+        check = False
+        for i in range(len(pblist)):
+            if alphabet[y] in pblist[i]:
+                answer += pblist[i][abs(pblist[i].index(alphabet[y])-1)]
+                check = True
+        if check == False:
+            answer += alphabet[y]
+    print(f" -\n{answer}")
+
+def helpinfo():
+    variable = "blank"
+    helpscreen = [" -################################################################",
+                  " -################################################################",
+                  " -##                                                            ##",
+                  " -##  help info:                                                ##",
+                  " -##  this is some informative text...                          ##",
+                  " -##                                                            ##",
+                  " -##  1) 1                                                      ##",# To do list:
+                  " -##                                                            ##",# -get Thomas Ma's input on usefull/help info
+                  " -##  2) 2                                                      ##",# -code help functions for file management & usage
+                  " -##                                                            ##",# -create variations (e.g original, enigma +, extra user friendly)
+                  " -##  3) 3                                                      ##",# -Debug error when saving on first start
+                  " -##                                                            ##",
+                  " -##  4) input text to replace help call                        ##",
+                  " -##                                                            ##",
+                  " -################################################################",
+                  " -################################################################\n"]
+    while variable != "back":
+        for line in helpscreen:
+            print(line)
+        variable = input(" >")
+        if variable == "1":
+            help1()
+        elif variable == "2":
+            help2()
+        elif variable == "3":
+            help3()
+#work on help
+def help1():
+    print("help1\n >")
+def help2():
+    print("help2\n >")
+def help3():
+    print("help3\n >")
+start()
