@@ -1,3 +1,6 @@
+# IC	DMTWSILRUYQNKFEJCAZBPGXOHV	1924
+# IIC	HQZGPJTMOBLNCIFDYAWVEUSRKX	1924
+# IIIC	UQNTLSZFMREHDPXKIBVYGJCWOA	1924
 import random
 import time
 from random import randint
@@ -100,7 +103,7 @@ def start():
                 start()
     elif setup == "create":
         rotorset = getinput(" -Input 'current' to use current rotor set\n -Input 'new' to generate a new rotor set\n >")
-        while rotorset not in ("current","new"):
+        while rotorset not in ("current","new","commercial"):
             rotorset = getinput(" -\n -Error\n -\n -Input 'current' to use built in rotor set\n -Input 'new' to generate a new rotor set\n >")
         if rotorset == "new":
             for n in range(len(rotorlist)):
@@ -139,6 +142,9 @@ def start():
                 print(" -Error with: 'saved_rotors_encryption_2.8.txt'\n -restart\n")
                 time.sleep(3)
                 start()
+        elif rotorset == "commercial":
+            alphabete = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+            getcommercialrotors(alphabete)
         validation = False
         while validation == False:
             validation = True
@@ -227,6 +233,15 @@ def getinput(text):
     elif var == "restart":
         start()
     return var
+    
+
+
+def getcommercialrotors(alphabete):
+    rotors = [["D","M","T","W","S","I","L","R","U","Y","Q","N","K","F","E","J","C","A","Z","B","P","G","X","O","H","V"],["H","Q","Z","G","P","J","T","M","O","B","L","N","C","I","F","D","Y","A","W","V","E","U","S","R","K","X"],["U","Q","N","T","L","S","Z","F","M","R","E","H","D","P","X","K","I","B","V","Y","G","J","C","W","O","A"]]
+    for r in range(len(rotors)):
+        for element in range(len(rotors[r])):
+            rotors[r][element] = alphabete.index(rotors[r][element])
+    return rotors
 
 def getrotor(alphabet):
     newrotor = []
