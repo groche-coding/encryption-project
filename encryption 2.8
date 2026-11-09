@@ -1,26 +1,45 @@
-# IC	DMTWSILRUYQNKFEJCAZBPGXOHV	1924
-# IIC	HQZGPJTMOBLNCIFDYAWVEUSRKX	1924
-# IIIC	UQNTLSZFMREHDPXKIBVYGJCWOA	1924
 import random
 import time
 from random import randint
 
+#   Index:
+#      section:
+#         1: retreiving saved setup
+#            test: retreiving saved setup /
+#
+#         2: generation and saving of new setup
+#            test: saving setup
+#
+#         3: manual creation of a new setup
+#            3a: generation of new rotorset   (switch to 3b)
+#            3b: retreiving saved rotorset   (switch to 3a)
+#            3c: retreiving naval rotorset
+#            3d: retreiving army rotorset
+#            3e: retreiving airforce rotorset
+#            3f: retreiving commercial rotorset
+#            3g: 
+#            3h: 
+#            3i: 
+#            3j: 
+
 def start():
     reflector = []
-    rotorlist = [[],[],[],[],[],[]]
+    rotorlist = [] 
     introduction = [" -################################################################",
                     " -################################################################",
                     " -##                                                            ##",
                     " -##  program info:                                             ##",
-                    " -##  this is some informative text...                          ##",
                     " -##                                                            ##",
+                    " -##  After setup 'Input text: >' will be displayed. Enter the  ##",
+                    " -##  mesage that you wish to encrypt and the cypher-text will  ##",
+                    " -##  be returned. To decrypt a mesage, setup this program in   ##",
+                    " -##  the same way as when the mesage was encrypted and enter   ##",
+                    " -##  the cypher-text as if you wanted to encrypt it and the    ##",
+                    " -##  plain-text mesage will be returned. Once set-up you can   ##",
+                    " -##  enter multiple mesages without restarting the program.    ##",
                     " -##                                                            ##",
-                    " -##                                                            ##",
-                    " -##                                                            ##",
-                    " -##                                                            ##",
-                    " -##                                                            ##",
-                    " -##                                                            ##",
-                    " -##                                                            ##",
+                    " -##  Typing 'help' returns a help menu. Your next input will   ##",
+                    " -##  replace the input where the help function was called.     ##",
                     " -##                                                            ##",
                     " -################################################################",
                     " -################################################################\n\n"]
@@ -31,33 +50,105 @@ def start():
     while setup not in ("current","new","create"):
         setup = getinput(" -\n -Error\n -\n -Input 'current' to use current setup\n -Input 'new' to generate a new setup\n -Or input 'create' to create a new setup\n >")
     if setup == "current":
+        #################### section 1 open
         configuration = []
         rotations = []
         pblist = []
         pb_config = []
+        #####
+        #test area 1 open
+        #####
+##    len arr
+##    len(arr[0]) True len(arr[0][0])
+##    len(arr[1]) False
+##    .
+##    .
+##    .
         try:
+            data = []
+            meta_data = []
+            n = 0
             with open("saved_setup_encryption_2.8.txt") as current_setup:
-                n = 0
                 for line in current_setup:
-                    n += 1
-                    if n <= len(alphabet)*len(rotorlist):
-                        rotorlist[(n-1)//len(alphabet)].append(int(line.strip()))
-                    elif n <= len(alphabet)*(len(rotorlist)+1):
-                        reflector.append(int(line.strip()))
-                    elif n <= (len(alphabet)*(len(rotorlist)+1))+3:
-                        configuration.append(int(line.strip()))
-                    elif n <= (len(alphabet)*(len(rotorlist)+1))+6:
-                        rotations.append(int(line.strip()))
+                    if n == 0:
+                        print(f"n: {n}")
+                        save_list = []
+                        dimention_one = int(line.strip())
+                        for x in range(dimention_one):
+                            save_list.append([])
+                    elif n < dimention_one:
+                        meta_data.append(str(line.strip()).split(" "))
+                        entry_length = int(meta_data[n-1][0])
+                        if meta_data[n-1][1] == True:
+                            for x in range(entry_length):
+                                save_list[n-1].append([])
+                            sub_entry_length = int(meta_data[n-1][2])
                     else:
-                        pb_config.append(line.strip())
-                        if len(pb_config) == 2:
-                            pblist.append(pb_config)
-                            pb_config = []
+                        data.append(str(line.strip()))
+                    n += 1
+            print(data)
+            print(meta_data)
+            n = 0
+            for element in data:
+                validation = False
+                total = 0
+                for x in range(dimension_one):
+                    if meta_data[x][1] == True and validation == False:
+                        for y in range(meta_data[x][0]):
+                            if len(save_list[x][y]) < meta_data[x][2]:
+                                save_list[x][y].append(element)
+                                validation = True
+                                break
+                    elif len(save_list[x]) < meta_data[x][0] and validation == False:
+                        save_list[x].append(element)
+                        validation = True
+                        break
+                n += 1
+                #####
+                #####
+                #####
+            print(save_list)
+            print()
+            print()
+            for entry in save_list:
+                print()
+                print(entry)
+                print()
+            for i in range(len(save_list[0])):
+                rotorlist.append([])
+                for n in range(len(save_list[0][i])):
+                    rotorlist[i].append(int(save_list[0][n].strip()))
+            print(rotorlist)
+            print()
+            for n in range(len(save_list[1])):
+                reflector.append(int(save_list[1][n]))
+            print(reflector)
+            print()
+            for n in range(len(save_list[2])):
+                configuration.append(int(save_list[2][n]))
+            print(configuration)
+            print()
+            for n in range(len(save_list[3])):
+                rotations.append(int(save_list[3][n]))
+            print(rotations)
+            print()
+            for n in range(len(save_list[4])):
+                pb_config.append(str(save_list[4][n]))
+                if len(pb_config) == 2:
+                    pblist.append(pb_config)
+                    pb_config = []
+            print(pblist)
+                    #####
+                    #test area 1 close
+                    #####
         except:
             print(" -Error with: 'saved_setup_encryption_2.8.txt'\n -restart\n") 
             time.sleep(3)
             start()
+        #################### section 1 close
     elif setup == "new":
+        #################### section 2 open
+        rotorlist = [[],[],[],[],[],[]]
         pblist = []
         unswappedlist = alphabet.copy()
         while True:
@@ -77,35 +168,46 @@ def start():
         reflector = getreflector(alphabet)
         configuration = [randint(1,6),randint(1,6),randint(1,6)]
         rotations = [randint(0,len(alphabet)-1),randint(0,len(alphabet)-1),randint(0,len(alphabet)-1)]
-        save = input(" -Save setup as 'saved_setup_encryption_2.8.txt' (Y/N)\n -This will replace current setup\n >")
+        save = getinput(" -Save setup as 'saved_setup_encryption_2.8.txt' (Y/N)\n -This will replace current setup\n >")
         while save not in ["Y","N"]:
-            save = input(" -\n -Error\n -\n -Save setup as 'saved_setup_encryption_2.8.txt' (Y/N)\n -This will replace current setup\n >")
+            save = getinput(" -\n -Error\n -\n -Save setup as 'saved_setup_encryption_2.8.txt' (Y/N)\n -This will replace current setup\n >")
         if save == "Y":
+            #####
+            #test area 2 open
+            #####
+            #
+            #format:
+            #
+            ##    len arr
+            ##    len(arr[0]) True len(arr[0][0])
+            ##    len(arr[1]) False
+            ##    .
+            ##    .
+            ##    .
+            #
+            save_list = c1d([rotorlist,[reflector],[configuration],[rotations],pblist]) #takes 2d inputs as 3d arr
+            print(save_list)
+            #####
+            #test area 2 close
+            #####
             try:
-                save_list = []
-                for rotor in rotorlist:
-                    for element in rotor:
-                        save_list.append(element)
-                for element in reflector:
-                    save_list.append(element)
-                for element in configuration:
-                    save_list.append(element)
-                for element in rotations:
-                    save_list.append(element)
-                for pb_config in pblist:
-                    for element in pb_config:
-                        save_list.append(element)
+                print("1")
                 with open("saved_setup_encryption_2.8.txt", "w") as current_setup:
+                    print("2")
                     current_setup.write("\n".join(map(str,save_list)))
+                    print("3")
             except:
                 print(" -Error with: 'saved_setup_encryption_2.8.txt'\n -restart\n")
                 time.sleep(3)
                 start()
+        #################### section 2 close
     elif setup == "create":
-        rotorset = getinput(" -Input 'current' to use current rotor set\n -Input 'new' to generate a new rotor set\n >")
-        while rotorset not in ("current","new","commercial"):
-            rotorset = getinput(" -\n -Error\n -\n -Input 'current' to use built in rotor set\n -Input 'new' to generate a new rotor set\n >")
+        #################### section 3 open
+        rotorset = getinput(" -Input 'current' to use current rotor set\n -Input 'new' to generate a new rotor set\n -Input 'naval' to use naval rotor set\n -Input 'military' to use military rotor set\n -Input 'commercial' to use commercial rotor set\n >") 
+        while rotorset not in ("current","new","naval","military","commercial"):
+            rotorset = getinput(" -\n -Error\n  -Input 'current' to use current rotor set\n -Input 'new' to generate a new rotor set\n -Input 'naval' to use naval rotor set\n -Input 'military' to use military rotor set\n -Input 'commercial' to use commercial rotor set\n >")
         if rotorset == "new":
+            #################### section 3a open
             for n in range(len(rotorlist)):
                 rotorlist[n] = getrotor(alphabet)
                 print(f" -Rotor {n+1}:\n -{rotorlist[n]}")
@@ -113,7 +215,7 @@ def start():
             print(f" -Reflector:\n -{reflector}")
             save = getinput(" -Save rotor list as 'saved_rotors_encryption_2.8.txt' (Y/N)\n -This will replace current rotor list\n >")
             while save not in ["Y","N"]:
-                save = input(" -\n -Error\n -\n -Save rotor list as 'saved_rotors_encryption_2.8.txt' (Y/N)\n -This will replace current rotor list\n >")
+                save = getinput(" -\n -Error\n -\n -Save rotor list as 'saved_rotors_encryption_2.8.txt' (Y/N)\n -This will replace current rotor list\n >")
             if save == "Y":
                 try:
                     save_list = []
@@ -128,7 +230,9 @@ def start():
                     print(" -Error with: 'saved_rotors_encryption_2.8.txt'\n -restart\n")
                     time.sleep(3)
                     start()
+                #################### section 3a close
         elif rotorset == "current":
+            #################### section 3b open
             try:
                 with open("saved_rotors_encryption_2.8.txt", "r") as current_setup:
                     n = 0
@@ -142,9 +246,24 @@ def start():
                 print(" -Error with: 'saved_rotors_encryption_2.8.txt'\n -restart\n")
                 time.sleep(3)
                 start()
+            #################### section 3b close
+        #################### section 3c open
+        elif rotorset == "naval":
+            ...
+        #################### section 3c clsoe
+        #################### section 3d open
+        elif rotorset == "military":
+            ...
+        #################### section 3d clsoe
+        #################### section 3e open
+        elif rotorset == "airforce":
+            ...
+        #################### section 3e clsoe
+        #################### section 3f open
         elif rotorset == "commercial":
-            alphabete = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
-            getcommercialrotors(alphabete)
+            ...
+        #################### section 3f clsoe
+        #################### section 3g open
         validation = False
         while validation == False:
             validation = True
@@ -157,6 +276,8 @@ def start():
                 validation = False
             if validation == False:
                 print(" -\n -Error\n -")
+        #################### section 3g close
+        #################### section 3h open
         validation = False
         while validation == False:
             validation = True
@@ -175,6 +296,8 @@ def start():
                 print(" -\n -Error\n -")
         for i in range(len(rotations)):
             rotations[i] = int(rotations[i])
+        #################### section 3h close
+        #################### section 3i open
         validation = False
         pblist = []
         unswappedlist = alphabet.copy()
@@ -197,9 +320,11 @@ def start():
                         print(" -\n -Error\n -character not in alphabet\n -\n -Or character has already been swapped\n")
                 else:
                     print(" -\n -Error\n -")
-        save = input(" -Save setup as 'saved_setup_encryption_2.8.txt' (Y/N)\n -This will replace current setup\n >")
+        #################### section 3i close
+        #################### section 3j open
+        save = getinput(" -Save setup as 'saved_setup_encryption_2.8.txt' (Y/N)\n -This will replace current setup\n >")
         while save not in ["Y","N"]:
-            save = input(" -\n -Error\n -\n -Save setup as 'saved_setup_encryption_2.8.txt' (Y/N)\n -This will replace current setup\n >")
+            save = getinput(" -\n -Error\n -\n -Save setup as 'saved_setup_encryption_2.8.txt' (Y/N)\n -This will replace current setup\n >")
         if save == "Y":
             try:
                 save_list = []
@@ -221,6 +346,8 @@ def start():
                 print(" -Error with: 'saved_setup_encryption_2.8.txt'\n -restart\n")
                 time.sleep(3)
                 start()
+        #################### section 3j close
+        #################### section 3 close
     rotors = [rotorlist[int(configuration[0])-1],rotorlist[int(configuration[1])-1],rotorlist[int(configuration[2])-1]]
     while 0 == 0:
         enigma(rotors,reflector,alphabet,rotations,pblist)
@@ -233,16 +360,33 @@ def getinput(text):
     elif var == "restart":
         start()
     return var
-    
+
+# do more research
+
+## I    PEZUOHXSCVFMTBGLRINQJWAYDI	P	Y / E (varies by model configuration)
+## II	ZOUESYDKFWPCIQXHMVBLGNJRAT	M	E / N (varies by model configuration)
+## III	EHRVXGAOBQUSIMZFLYNWKTPDJC	V	N / Y (varies by model configuration)
+
+## contrasting
+
+## Rotor	Right Side Input (Alphabet Order)	Left Side Output Translation	Notch Turnover
+## ETW (Entry Disc)	ABCDEFGHIJKLMNOPQRSTUVWXYZ	QWERTZUIOASDFGHJKPYXCVBNML	—
+## Rotor I	        ABCDEFGHIJKLMNOPQRSTUVWXYZ	LPGSZMHAEOQKVXRFYBUTNICJDW	G (Window shows Y)
+## Rotor II	        ABCDEFGHIJKLMNOPQRSTUVWXYZ	SLVGBTFXJQOHEWIRZYAMKPCNDU	M (Window shows E)
+## Rotor III	        ABCDEFGHIJKLMNOPQRSTUVWXYZ	CJGDPSHKTURAWZXFMYNQOBVLIE	V (Window shows N)
+## Reflector (UKW)	ABCDEFGHIJKLMNOPQRSTUVWXYZ	IMETCGFRAYSQBZXWLHKDVUPOJN	Fixed / Settable
 
 
+#####
+#####
 def getcommercialrotors(alphabete):
-    rotors = [["D","M","T","W","S","I","L","R","U","Y","Q","N","K","F","E","J","C","A","Z","B","P","G","X","O","H","V"],["H","Q","Z","G","P","J","T","M","O","B","L","N","C","I","F","D","Y","A","W","V","E","U","S","R","K","X"],["U","Q","N","T","L","S","Z","F","M","R","E","H","D","P","X","K","I","B","V","Y","G","J","C","W","O","A"]]
+    rotors = [["P","E","Z","U","O","H","X","S","C","V","F","M","T","B","G","L","R","I","N","Q","J","W","A","Y","D","I"],["Z","O","U","E","S","Y","D","K","F","W","P","C","I","Q","X","H","M","V","B","L","G","N","J","R","A","T"],["E","H","R","V","X","G","A","O","B","Q","U","S","I","M","Z","F","L","Y","N","W","K","T","P","D","J","C"]]
     for r in range(len(rotors)):
         for element in range(len(rotors[r])):
-            rotors[r][element] = alphabete.index(rotors[r][element])
+            rotors[r][element] = int(alphabete.index(rotors[r][element]))
     return rotors
-
+#####
+#####
 def getrotor(alphabet):
     newrotor = []
     while len(newrotor) < len(alphabet):
@@ -318,12 +462,12 @@ def helpinfo():
                   " -##  this is some informative text...                          ##",
                   " -##                                                            ##",
                   " -##  1) 1                                                      ##",# To do list:
-                  " -##                                                            ##",# -get Thomas Ma's input on usefull/help info
+                  " -##                                                            ##",
                   " -##  2) 2                                                      ##",# -code help functions for file management & usage
-                  " -##                                                            ##",# -create variations (e.g original, enigma +, extra user friendly)
+                  " -##                                                            ##",
                   " -##  3) 3                                                      ##",# -Debug error when saving on first start
                   " -##                                                            ##",### -Update softcoded file handling for n rotors!
-                  " -##  4) input text to replace help call                        ##",### -Save to github
+                  " -##  4) input text to replace help call                        ##",
                   " -##                                                            ##",
                   " -################################################################",
                   " -################################################################\n"]
@@ -345,7 +489,22 @@ def help2():
 def help3():
     print("help3\n >")
 
+def c1d(arr): # Concatinate (arrays) 1 dimentional (output)
+    ans = arr
+    if type(ans) == list:
+        validation = False
+        while validation == False:
+            validation = True
+            next_list = ans
+            ans = []
+            for entry in next_list:
+                if type(entry) == list:
+                    validation = False
+                    for element in entry:
+                        ans.append(element)
+                    meta_data.append(len(entry))## unfinished
+                else:
+                    ans.append(entry)
+    return ans
+print(c1d([[[1]],2,[3,4],[[5,6,7],[8,9]],10,11,12,13,14,[15],[[[[]]]]]))
 start()
-
-
-
